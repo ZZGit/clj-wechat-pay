@@ -1,6 +1,6 @@
 # clj-wechat-pay
 
-Clojure 微信支付
+Clojure 微信支付, 详情参考[微信api文档](https://pay.weixin.qq.com/wiki/doc/api/sl.html)
 
 ## 功能
  * 数据转换
@@ -8,11 +8,15 @@ Clojure 微信支付
 
 ## 版本
 
+```
+[clj-wechat-pay "0.1.0"]
+```
+
 ## 例子
 
 所有请求参数无须指定nonce_str、sign、sign_type，内部自动指定，自动根据参数进行签名。
 
-返回结果的会根据return_code和result_code，生成对于的:return-ok?和:result-ok?，方便后续逻辑判断
+返回结果的会根据return_code和result_code，生成对应的:return-ok?和:result-ok?，方便后续逻辑判断
 
 返回数据示例如下：
 ```clojure
@@ -25,7 +29,6 @@ Clojure 微信支付
 ```
 
 ### Native支付
-具体参数参考微信api文档
 ```clojure
 (require '[clj-wechat-pay.core :refer :all])
 
@@ -142,19 +145,4 @@ Clojure 微信支付
 退款通知回调的内容，微信使用AES-256-ECB加密算法,JDK 9以下的版本需要扩展以下：
 
 * 进入到[下载页面](https://www.oracle.com/technetwork/java/javase/downloads/jce-all-download-5170447.html),下载指定版本
-*解压后，拷local_policy.jar和US_export_policy.jar到$JAVA_HOME/jre/lib/security目录
-
-## License
-
-Copyright © 2020 Tom.Yu
-
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
-
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+* 解压后，拷local_policy.jar和US_export_policy.jar到$JAVA_HOME/jre/lib/security目录
