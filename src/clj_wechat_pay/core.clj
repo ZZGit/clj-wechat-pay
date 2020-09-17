@@ -3,7 +3,8 @@
    [clj-http.client :as client]
    [clojure.tools.logging :as log]
    [clj-wechat-pay.utils :as utils]
-   [clj-wechat-pay.security :as security]))
+   [clj-wechat-pay.security :as security]
+   [clj-wechat-pay.pay-result :as pay-result]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 微信支付API                                       ;;
@@ -50,15 +51,6 @@
     (log/info "微信支付API结束调用,返回结果" (select-keys result [:status :headers :body] ))
     (:body result)))
 
-
-(defn- pay-result-sign [result secret]
-  (let [params {:appId (:appid result)
-                :timeStamp (utils/timestamp-str)
-                :nonceStr (:nonce_str result)
-                :package (str "prepay_id=" (:prepay_id result))
-                :signType "MD5"}]
-    (assoc params :paySign (security/sign params secret))))
-
 (defn- code-success? [code]
   (= "SUCCESS" code))
 
@@ -90,15 +82,28 @@
   (-> (assoc params :trade_type "NATIVE")
       (unifiedorder secret)))
 
-(defn- client-pay [params secret]
-  (let [result (unifiedorder params secret)
-        sign-result (pay-result-sign result secret)]
-    (if (and (:return-ok? result) (:result-ok? result))
-      (assoc result :client-result sign-result)
-      result)))
-
 (defn jsapi-pay
   "JSAPI支付"
+  [params secret]
+  (-> (assoc params :trade_type "JSAPI")
+      (unifiedorder secret)))
+
+(defn h5-pay
+  "H5支付"
+  [params secret]
+  (-> (assoc params :trade_type "MWEB")
+      (unifiedorder secret)))
+
+(defn- client-pay
+  "客户端支付(小程序、APP)"
+  [params secret]
+  (let [result (unifiedorder params secret)]
+    (if (and (:return-ok? result) (:result-ok? result))
+      (assoc result :client-result (pay-result/pay-result-sign result secret))
+      result)))
+
+(defn applet-pay
+  "小程序支付"
   [params secret]
   (-> (assoc params :trade_type "JSAPI")
       (client-pay secret)))
@@ -107,12 +112,6 @@
   "APP支付"
   [params secret]
   (-> (assoc params :trade_type "APP")
-      (client-pay secret)))
-
-(defn h5-pay
-  "H5支付"
-  [params secret]
-  (-> (assoc params :trade_type "MWEB")
       (client-pay secret)))
 
 (defn refund

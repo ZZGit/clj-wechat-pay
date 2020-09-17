@@ -9,8 +9,8 @@
    [org.apache.commons.io IOUtils]
    [org.apache.commons.codec.binary Hex]
    [javax.crypto.spec SecretKeySpec ]
-   [javax.crypto KeyGenerator Cipher Mac]
-   [java.util.zip GZIPInputStream GZIPOutputStream]
+   [javax.crypto Cipher Mac]
+   [java.util.zip GZIPInputStream]
    [java.security MessageDigest InvalidKeyException NoSuchAlgorithmException]
    [java.io ByteArrayOutputStream UnsupportedEncodingException]))
 
@@ -82,19 +82,16 @@
       (or (:signType params)
           (:sign_type params))
       "MD5"))))
-
 (defmethod sign :MD5 [params secret]
   (-> params
       (temp-sign-str secret)
       (md5)
       (string/upper-case)))
-
 (defmethod sign :HMAC-SHA256 [params secret]
   (-> params
       (temp-sign-str secret)
       (hmac-sha256 secret)
       (string/upper-case)))
-
 (defmethod sign :default [params secret]
   (log/error "不支持的加密算法" (name (:sign_type params))))
 
@@ -106,8 +103,7 @@
 (defn decode-refund-info
   "解密退款信息"
   [info secret]
-  (let [base64-info (base64 info)
-        md5-secret (md5 secret)]
+  (let [md5-secret (md5 secret)]
     (slurp (aes-decode (base64 info) (.getBytes md5-secret)))))
 
 (defn gzip->str
