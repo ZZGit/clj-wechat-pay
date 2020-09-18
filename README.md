@@ -7,9 +7,10 @@ Clojure 微信支付, 详情参考[微信api文档](https://pay.weixin.qq.com/wi
  * 数据加密、解密
 
 ## 版本
+[![Clojars Project](https://img.shields.io/clojars/v/clj-wechat-pay.svg)](https://clojars.org/clj-wechat-pay)
 
 ```
-[clj-wechat-pay "0.1.0"]
+[clj-wechat-pay "0.1.1"]
 ```
 
 ## 例子
