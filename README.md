@@ -14,7 +14,7 @@ Clojure 微信支付, 详情参考[微信api文档](https://pay.weixin.qq.com/wi
 
 ## 例子
 
-所有请求参数无须指定nonce_str、sign、sign_type，内部自动指定，自动根据参数进行签名。
+所有请求参数无须指定nonce_str、sign、sign_type、trade_type，内部自动指定，自动根据参数进行签名。
 
 返回结果的会根据return_code和result_code，生成对应的:return-ok?和:result-ok?，方便后续逻辑判断
 
@@ -48,6 +48,11 @@ Clojure 微信支付, 详情参考[微信api文档](https://pay.weixin.qq.com/wi
 ### JSAPI支付
 ```clojure
 (jsapi-pay params secret)
+```
+
+### 小程序支付
+```clojure
+(applet-pay params secret)
 ```
 
 ### APP支付
